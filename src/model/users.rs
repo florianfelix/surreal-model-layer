@@ -8,6 +8,7 @@ use crate::model::ModelManager;
 #[allow(unused_imports)]
 use crate::model::{Error, Result};
 
+#[allow(unused_imports)]
 use super::surreal_store::base_crud::{
     base_create_with_id, base_delete, base_get, base_list, base_update, SurrealBmc,
 };

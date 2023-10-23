@@ -5,9 +5,13 @@ use self::surreal_store::{new_surreal_connection, SrDb};
 pub use self::error::{Error, Result};
 
 pub mod error;
-pub mod label;
+/// base functions for the specific BMCs
 pub mod surreal_store;
+/// specific data model. uses the base functions.
+pub mod label;
+/// specific data model. uses the base functions.
 pub mod transaction;
+/// specific data model. uses the base functions.
 pub mod users;
 /// table to test the roundtrip of varying datatypes
 pub mod datatypes;
@@ -19,10 +23,12 @@ pub mod datatypes;
 /// Holds the Surreal Client
 #[derive(Clone)]
 pub struct ModelManager {
+    /// Surreal Client
     srdb: SrDb,
 }
 
 impl ModelManager {
+    /// Init ModelManager with default Surreal Connection
     pub async fn new() -> Result<Self> {
         let srdb = new_surreal_connection()
             .await

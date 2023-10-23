@@ -226,15 +226,14 @@
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(unused)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
 </span><span class="kw">use </span>std::collections::HashMap;
 
-<span class="kw">use </span>chrono::{Utc, Local};
+<span class="kw">use </span>chrono::Local;
 <span class="kw">use </span>model::datatypes::DataTypesForCreate;
-<span class="kw">use </span>surrealdb::sql::{Thing, Id};
+<span class="kw">use </span>surrealdb::sql::Thing;
 <span class="kw">use </span>ulid::Ulid;
 <span class="kw">use </span>uuid::Uuid;
 
@@ -249,9 +248,6 @@
 <span class="kw">mod </span>error;
 <span class="doccomment">/// BackendModelControllers for custom tables
 </span><span class="kw">mod </span>model;
-
-
-
 
 <span class="doccomment">/// call the test_... functions
 </span><span class="attr">#[tokio::main]
@@ -293,7 +289,10 @@
 
     <span class="kw">let </span>jsonval = serde_json::to_value(<span class="kw-2">&amp;</span>embed).unwrap();
 
-    <span class="kw">let </span>record = Thing { tb: <span class="string">&quot;tablename&quot;</span>.to_string(), id: <span class="string">&quot;recordid&quot;</span>.into() };
+    <span class="kw">let </span>record = Thing {
+        tb: <span class="string">&quot;tablename&quot;</span>.to_string(),
+        id: <span class="string">&quot;recordid&quot;</span>.into(),
+    };
 
     <span class="kw">let </span>record: Thing = <span class="string">&quot;tablename:[&#39;list&#39;, &#39;identifier&#39;]}&quot;</span>.parse().unwrap();
 
@@ -315,7 +314,6 @@
         record: record.clone(),
         record_string: record.to_raw(),
         <span class="comment">// record_id: record_id, // Does not deserialize. with compound ids
-        
     </span>};
 
     <span class="comment">// let data = DataTypesForCreate::default();

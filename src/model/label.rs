@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
-use uuid::Uuid;
-use uuid;
 
 use crate::model::ModelManager;
 

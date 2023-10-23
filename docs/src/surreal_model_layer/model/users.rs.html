@@ -92,6 +92,7 @@
 <a href="#92" id="92">92</a>
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>surrealdb::sql::Thing;
 <span class="kw">use </span>uuid;
@@ -102,7 +103,8 @@
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span><span class="kw">crate</span>::model::{Error, <span class="prelude-ty">Result</span>};
 
-<span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
+<span class="attr">#[allow(unused_imports)]
+</span><span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
     base_create_with_id, base_delete, base_get, base_list, base_update, SurrealBmc,
 };
 

@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
-use surrealdb::sql::{Id, Thing, Object};
+use surrealdb::sql::Thing;
 
 use crate::model::{
     surreal_store::{Error, Result},
@@ -10,9 +8,9 @@ use crate::model::{
 };
 
 /// Model Bmc Structs need to implement this trait.
-/// 
+///
 /// And set the TABLE name.
-/// 
+///
 /// The base... functions will use the TABLE name.
 pub trait SurrealBmc {
     const TABLE: &'static str;
@@ -50,10 +48,7 @@ where
 
     let id = ulid::Ulid::new().to_string();
 
-    let created: Option<Value> = srdb
-        .create((MC::TABLE, &id))
-        .content(content)
-        .await?;
+    let created: Option<Value> = srdb.create((MC::TABLE, &id)).content(content).await?;
 
     if let Some(created) = created {
         let converted = serde_json::from_value(created)?;
@@ -176,12 +171,15 @@ where
     INFO FOR TABLE type::table($tablename);
     ";
 
-    let q = format!("
+    let q = format!(
+        "
     INFO FOR TABLE {};
-    ", MC::TABLE);
+    ",
+        MC::TABLE
+    );
 
     println!("TABLEINFO: {}", MC::TABLE);
-    
+
     let mut res = srdb.query(q).await?;
 
     let val: Option<Value> = res.take(0)?;
@@ -192,5 +190,4 @@ where
     } else {
         return Err(Error::FailedToCreate);
     }
-
 }

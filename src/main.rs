@@ -3,9 +3,9 @@
 #![allow(dead_code)]
 use std::collections::HashMap;
 
-use chrono::{Utc, Local};
+use chrono::Local;
 use model::datatypes::DataTypesForCreate;
-use surrealdb::sql::{Thing, Id};
+use surrealdb::sql::Thing;
 use ulid::Ulid;
 use uuid::Uuid;
 
@@ -20,9 +20,6 @@ pub use self::error::{Error, Result};
 mod error;
 /// BackendModelControllers for custom tables
 mod model;
-
-
-
 
 /// call the test_... functions
 #[tokio::main]
@@ -64,7 +61,10 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
 
     let jsonval = serde_json::to_value(&embed).unwrap();
 
-    let record = Thing { tb: "tablename".to_string(), id: "recordid".into() };
+    let record = Thing {
+        tb: "tablename".to_string(),
+        id: "recordid".into(),
+    };
 
     let record: Thing = "tablename:['list', 'identifier']}".parse().unwrap();
 
@@ -86,7 +86,6 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         record: record.clone(),
         record_string: record.to_raw(),
         // record_id: record_id, // Does not deserialize. with compound ids
-        
     };
 
     // let data = DataTypesForCreate::default();

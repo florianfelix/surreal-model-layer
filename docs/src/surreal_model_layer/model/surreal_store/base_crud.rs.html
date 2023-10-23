@@ -191,14 +191,9 @@
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
 <a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
-
-<span class="kw">use </span>serde::{de::DeserializeOwned, Deserialize, Serialize};
+</pre></div><pre class="rust"><code><span class="kw">use </span>serde::{de::DeserializeOwned, Serialize};
 <span class="kw">use </span>serde_json::Value;
-<span class="kw">use </span>surrealdb::sql::{Id, Thing, Object};
+<span class="kw">use </span>surrealdb::sql::Thing;
 
 <span class="kw">use </span><span class="kw">crate</span>::model::{
     surreal_store::{Error, <span class="prelude-ty">Result</span>},
@@ -206,9 +201,9 @@
 };
 
 <span class="doccomment">/// Model Bmc Structs need to implement this trait.
-/// 
+///
 /// And set the TABLE name.
-/// 
+///
 /// The base... functions will use the TABLE name.
 </span><span class="kw">pub trait </span>SurrealBmc {
     <span class="kw">const </span>TABLE: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str;
@@ -246,10 +241,7 @@
 
     <span class="kw">let </span>id = ulid::Ulid::new().to_string();
 
-    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb
-        .create((MC::TABLE, <span class="kw-2">&amp;</span>id))
-        .content(content)
-        .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb.create((MC::TABLE, <span class="kw-2">&amp;</span>id)).content(content).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(created) = created {
         <span class="kw">let </span>converted = serde_json::from_value(created)<span class="question-mark">?</span>;
@@ -372,12 +364,15 @@
     INFO FOR TABLE type::table($tablename);
     &quot;</span>;
 
-    <span class="kw">let </span>q = <span class="macro">format!</span>(<span class="string">&quot;
+    <span class="kw">let </span>q = <span class="macro">format!</span>(
+        <span class="string">&quot;
     INFO FOR TABLE {};
-    &quot;</span>, MC::TABLE);
+    &quot;</span>,
+        MC::TABLE
+    );
 
     <span class="macro">println!</span>(<span class="string">&quot;TABLEINFO: {}&quot;</span>, MC::TABLE);
-    
+
     <span class="kw">let </span><span class="kw-2">mut </span>res = srdb.query(q).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">let </span>val: <span class="prelude-ty">Option</span>&lt;Value&gt; = res.take(<span class="number">0</span>)<span class="question-mark">?</span>;
@@ -388,6 +383,5 @@
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToCreate);
     }
-
 }
 </code></pre></div></section></main></body></html>

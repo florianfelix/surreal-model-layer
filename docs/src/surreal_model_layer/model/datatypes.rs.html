@@ -82,20 +82,22 @@
 <a href="#82" id="82">82</a>
 <a href="#83" id="83">83</a>
 <a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
 </pre></div><pre class="rust"><code><span class="comment">// region: Imports
 </span><span class="kw">use </span>std::collections::HashMap;
 
-<span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
+<span class="attr">#[allow(unused_imports)]
+</span><span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
     base_create, base_create_with_id, base_create_with_ulid, base_delete, base_get, base_info,
     base_list, base_update, SurrealBmc,
 };
 <span class="kw">use </span><span class="kw">crate</span>::model::ModelManager;
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span><span class="kw">crate</span>::model::{Error, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span>chrono::{DateTime, Local, NaiveDate, Utc};
+<span class="kw">use </span>chrono::{DateTime, Local, NaiveDate};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>serde_json::Value;
-<span class="kw">use </span>surrealdb::sql::{Id, Thing};
+<span class="kw">use </span>surrealdb::sql::Thing;
 <span class="kw">use </span>ulid::Ulid;
 <span class="kw">use </span>uuid::Uuid;
 <span class="comment">// endregion: Imports
