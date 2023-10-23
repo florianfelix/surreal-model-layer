@@ -213,6 +213,13 @@
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
 <a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(unused)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
@@ -235,7 +242,11 @@
 <span class="kw">mod </span>error;
 <span class="kw">mod </span>model;
 
-<span class="attr">#[tokio::main]
+<span class="doccomment">/// Basic CRUD Layer for SurrealDB
+
+
+
+</span><span class="attr">#[tokio::main]
 </span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>mm = ModelManager::new().<span class="kw">await</span><span class="question-mark">?</span>;
     delete_tables(<span class="kw-2">&amp;</span>mm).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -254,15 +265,16 @@
 <span class="kw">async fn </span>delete_tables(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>srdb = mm.srdb().clone();
     <span class="kw">let </span>sql = <span class="string">&quot;REMOVE TABLE transaction;
-               REMOVE TABLE label;
-               REMOVE TABLE user;
-               REMOVE TABLE datatypes&quot;</span>;
+    REMOVE TABLE label;
+    REMOVE TABLE user;
+    REMOVE TABLE datatypes&quot;</span>;
     <span class="kw">let </span>_res = srdb.query(sql).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="comment">// dbg!(_res);
     </span><span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>test_datatypes(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="comment">// region: Playground functions
+</span><span class="kw">async fn </span>test_datatypes(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>embed = EmbededStruct {
         last_name: <span class="string">&quot;Smith&quot;</span>.into(),
         age: <span class="number">32</span>,
@@ -428,4 +440,6 @@
 
     <span class="prelude-val">Ok</span>(())
 }
-</code></pre></div></section></main></body></html>
+
+<span class="comment">// endregion: Playground functions
+</span></code></pre></div></section></main></body></html>

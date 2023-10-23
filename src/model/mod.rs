@@ -1,3 +1,4 @@
+// region: Imports
 use self::surreal_store::{new_surreal_connection, SrDb};
 
 #[allow(unused_imports)]
@@ -10,6 +11,11 @@ pub mod transaction;
 pub mod users;
 pub mod datatypes;
 
+// endregion: Imports
+
+
+// region: Model Manager
+/// Holds the Surreal Client
 #[derive(Clone)]
 pub struct ModelManager {
     srdb: SrDb,
@@ -30,3 +36,5 @@ impl ModelManager {
         &self.srdb
     }
 }
+
+// endregion: Model Manager

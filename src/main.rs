@@ -20,6 +20,10 @@ pub use self::error::{Error, Result};
 mod error;
 mod model;
 
+/// Basic CRUD Layer for SurrealDB
+
+
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
@@ -39,14 +43,15 @@ async fn main() -> Result<()> {
 async fn delete_tables(mm: &ModelManager) -> Result<()> {
     let srdb = mm.srdb().clone();
     let sql = "REMOVE TABLE transaction;
-               REMOVE TABLE label;
-               REMOVE TABLE user;
-               REMOVE TABLE datatypes";
+    REMOVE TABLE label;
+    REMOVE TABLE user;
+    REMOVE TABLE datatypes";
     let _res = srdb.query(sql).await?;
     // dbg!(_res);
     Ok(())
 }
 
+// region: Playground functions
 async fn test_datatypes(mm: &ModelManager) -> Result<()> {
     let embed = EmbededStruct {
         last_name: "Smith".into(),
@@ -213,3 +218,5 @@ async fn test_labelbamc(mm: &ModelManager) -> Result<()> {
 
     Ok(())
 }
+
+// endregion: Playground functions
