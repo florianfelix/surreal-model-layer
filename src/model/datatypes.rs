@@ -54,6 +54,7 @@ pub struct DataTypesForCreate {
 // endregion: Types
 
 // region: DataTypesBmc
+/// Holds the functions and the table name for this Model.
 pub struct DataTypesBmc;
 
 impl SurrealBmc for DataTypesBmc {

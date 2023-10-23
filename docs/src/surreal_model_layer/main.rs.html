@@ -220,6 +220,13 @@
 <a href="#220" id="220">220</a>
 <a href="#221" id="221">221</a>
 <a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
 </pre></div><pre class="rust"><code><span class="attr">#![allow(unused)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
@@ -240,12 +247,13 @@
 <span class="kw">pub use </span><span class="self">self</span>::error::{Error, <span class="prelude-ty">Result</span>};
 
 <span class="kw">mod </span>error;
-<span class="kw">mod </span>model;
-
-<span class="doccomment">/// Basic CRUD Layer for SurrealDB
-
+<span class="doccomment">/// BackendModelControllers for custom tables
+</span><span class="kw">mod </span>model;
 
 
+
+
+<span class="doccomment">/// call the test_... functions
 </span><span class="attr">#[tokio::main]
 </span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>mm = ModelManager::new().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -262,9 +270,11 @@
     </span><span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>delete_tables(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="doccomment">/// start with deleting existing tables to begin afresh
+</span><span class="kw">async fn </span>delete_tables(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>srdb = mm.srdb().clone();
-    <span class="kw">let </span>sql = <span class="string">&quot;REMOVE TABLE transaction;
+    <span class="kw">let </span>sql = <span class="string">&quot;
+    REMOVE TABLE transaction;
     REMOVE TABLE label;
     REMOVE TABLE user;
     REMOVE TABLE datatypes&quot;</span>;
@@ -274,6 +284,7 @@
 }
 
 <span class="comment">// region: Playground functions
+</span><span class="doccomment">/// playground function to test the datatypes roundtrip
 </span><span class="kw">async fn </span>test_datatypes(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>embed = EmbededStruct {
         last_name: <span class="string">&quot;Smith&quot;</span>.into(),
@@ -321,7 +332,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>test_users(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="doccomment">/// test UserBmc
+</span><span class="kw">async fn </span>test_users(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>new_user_name = <span class="string">&quot;TheFirstUser&quot;</span>;
     <span class="kw">let </span>new_user = UserBmc::create(mm, new_user_name.into()).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">dbg!</span>(<span class="kw-2">&amp;</span>new_user);
@@ -340,7 +352,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>test_transactionbmc(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="doccomment">/// test TransactionBmc
+</span><span class="kw">async fn </span>test_transactionbmc(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="comment">// CREATE -- NORMAL RANDOM ID
     </span><span class="kw">let </span>ta1 = TransactionForCreate {
         title: <span class="string">&quot;First Transaction&quot;</span>.into(),
@@ -395,7 +408,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">async fn </span>test_labelbamc(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="doccomment">/// test LabelBmc
+</span><span class="kw">async fn </span>test_labelbamc(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="comment">// CREATE LABEL
     </span><span class="kw">let </span>created = LabelBmc::create(
         <span class="kw-2">&amp;</span>mm,

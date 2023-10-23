@@ -9,6 +9,7 @@ pub mod label;
 pub mod surreal_store;
 pub mod transaction;
 pub mod users;
+/// table to test the roundtrip of varying datatypes
 pub mod datatypes;
 
 // endregion: Imports

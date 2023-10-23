@@ -18,12 +18,13 @@ use crate::model::ModelManager;
 pub use self::error::{Error, Result};
 
 mod error;
+/// BackendModelControllers for custom tables
 mod model;
 
-/// Basic CRUD Layer for SurrealDB
 
 
 
+/// call the test_... functions
 #[tokio::main]
 async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
@@ -40,9 +41,11 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
+/// start with deleting existing tables to begin afresh
 async fn delete_tables(mm: &ModelManager) -> Result<()> {
     let srdb = mm.srdb().clone();
-    let sql = "REMOVE TABLE transaction;
+    let sql = "
+    REMOVE TABLE transaction;
     REMOVE TABLE label;
     REMOVE TABLE user;
     REMOVE TABLE datatypes";
@@ -52,6 +55,7 @@ async fn delete_tables(mm: &ModelManager) -> Result<()> {
 }
 
 // region: Playground functions
+/// playground function to test the datatypes roundtrip
 async fn test_datatypes(mm: &ModelManager) -> Result<()> {
     let embed = EmbededStruct {
         last_name: "Smith".into(),
@@ -99,6 +103,7 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
     Ok(())
 }
 
+/// test UserBmc
 async fn test_users(mm: &ModelManager) -> Result<()> {
     let new_user_name = "TheFirstUser";
     let new_user = UserBmc::create(mm, new_user_name.into()).await?;
@@ -118,6 +123,7 @@ async fn test_users(mm: &ModelManager) -> Result<()> {
     Ok(())
 }
 
+/// test TransactionBmc
 async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     // CREATE -- NORMAL RANDOM ID
     let ta1 = TransactionForCreate {
@@ -173,6 +179,7 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     Ok(())
 }
 
+/// test LabelBmc
 async fn test_labelbamc(mm: &ModelManager) -> Result<()> {
     // CREATE LABEL
     let created = LabelBmc::create(

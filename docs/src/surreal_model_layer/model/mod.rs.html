@@ -38,6 +38,7 @@
 <a href="#38" id="38">38</a>
 <a href="#39" id="39">39</a>
 <a href="#40" id="40">40</a>
+<a href="#41" id="41">41</a>
 </pre></div><pre class="rust"><code><span class="comment">// region: Imports
 </span><span class="kw">use </span><span class="self">self</span>::surreal_store::{new_surreal_connection, SrDb};
 
@@ -49,7 +50,8 @@
 <span class="kw">pub mod </span>surreal_store;
 <span class="kw">pub mod </span>transaction;
 <span class="kw">pub mod </span>users;
-<span class="kw">pub mod </span>datatypes;
+<span class="doccomment">/// table to test the roundtrip of varying datatypes
+</span><span class="kw">pub mod </span>datatypes;
 
 <span class="comment">// endregion: Imports
 
