@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["Label","LabelBmc","LabelForCreate","LabelForUpdate"]};

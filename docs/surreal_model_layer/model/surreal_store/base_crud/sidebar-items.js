@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["base_create","base_create_with_id","base_create_with_ulid","base_delete","base_get","base_info","base_list","base_update"],"trait":["SurrealBmc"]};

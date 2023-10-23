@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error"],"fn":["delete_tables","main","test_datatypes","test_labelbamc","test_transactionbmc","test_users"],"mod":["error","model"],"type":["Result"]};

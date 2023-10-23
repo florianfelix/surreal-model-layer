@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["new_surreal_connection"],"mod":["base_crud","error"],"type":["SrDb"]};
