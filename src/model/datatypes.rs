@@ -49,7 +49,6 @@ pub struct DataTypesForCreate {
     pub naivedate: NaiveDate,
     pub record: Thing,
     pub record_string: String,
-    // pub record_id: Id, // Does not deserialize.
 }
 
 // endregion: Types

@@ -85,7 +85,6 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         naivedate: Local::now().naive_local().date(),
         record: record.clone(),
         record_string: record.to_raw(),
-        // record_id: record_id, // Does not deserialize. with compound ids
     };
 
     // let data = DataTypesForCreate::default();
