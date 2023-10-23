@@ -82,7 +82,7 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         ulid: Ulid::new(),
         json: jsonval,
         datetime: Local::now(),
-        naivedate: Local::now().naive_utc().date(),
+        naivedate: Local::now().naive_local().date(),
         record: record.clone(),
         record_string: record.to_raw(),
         // record_id: record_id, // Does not deserialize. with compound ids
@@ -96,8 +96,8 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
     let listed = DataTypesBmc::list(mm).await?;
     // dbg!(listed);
 
-    let inf = DataTypesBmc::info(mm).await?;
-    dbg!(inf);
+    // let inf = DataTypesBmc::info(mm).await?;
+    // dbg!(inf);
 
     Ok(())
 }
