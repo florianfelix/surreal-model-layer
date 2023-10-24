@@ -1,3 +1,9 @@
+//! This is an example of a Surreal Model Layer
+//! 
+//! The idea is to copy and adapt the model module.
+//! 
+//! main is only used to test the things in the model module
+
 #![allow(unused)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
@@ -66,9 +72,8 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         id: "recordid".into(),
     };
 
+    // record parsed from raw
     let record: Thing = "tablename:['list', 'identifier']}".parse().unwrap();
-
-    // let record_id: Id = vec!["Some", "Thing"].into();
 
     let data = DataTypesForCreate {
         name: "Test".into(),

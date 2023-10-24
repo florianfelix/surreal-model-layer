@@ -226,7 +226,17 @@
 <a href="#226" id="226">226</a>
 <a href="#227" id="227">227</a>
 <a href="#228" id="228">228</a>
-</pre></div><pre class="rust"><code><span class="attr">#![allow(unused)]
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+</pre></div><pre class="rust"><code><span class="doccomment">//! This is an example of a Surreal Model Layer
+//! 
+//! The idea is to copy and adapt the model module.
+//! 
+//! main is only used to test the things in the model module
+
+</span><span class="attr">#![allow(unused)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
 </span><span class="kw">use </span>std::collections::HashMap;
@@ -294,11 +304,10 @@
         id: <span class="string">&quot;recordid&quot;</span>.into(),
     };
 
-    <span class="kw">let </span>record: Thing = <span class="string">&quot;tablename:[&#39;list&#39;, &#39;identifier&#39;]}&quot;</span>.parse().unwrap();
+    <span class="comment">// record parsed from raw
+    </span><span class="kw">let </span>record: Thing = <span class="string">&quot;tablename:[&#39;list&#39;, &#39;identifier&#39;]}&quot;</span>.parse().unwrap();
 
-    <span class="comment">// let record_id: Id = vec![&quot;Some&quot;, &quot;Thing&quot;].into();
-
-    </span><span class="kw">let </span>data = DataTypesForCreate {
+    <span class="kw">let </span>data = DataTypesForCreate {
         name: <span class="string">&quot;Test&quot;</span>.into(),
         float: <span class="number">1.33</span>,
         integer: <span class="number">42</span>,
@@ -310,11 +319,10 @@
         ulid: Ulid::new(),
         json: jsonval,
         datetime: Local::now(),
-        naivedate: Local::now().naive_utc().date(),
+        naivedate: Local::now().naive_local().date(),
         record: record.clone(),
         record_string: record.to_raw(),
-        <span class="comment">// record_id: record_id, // Does not deserialize. with compound ids
-    </span>};
+    };
 
     <span class="comment">// let data = DataTypesForCreate::default();
 
@@ -324,10 +332,10 @@
     <span class="kw">let </span>listed = DataTypesBmc::list(mm).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="comment">// dbg!(listed);
 
-    </span><span class="kw">let </span>inf = DataTypesBmc::info(mm).<span class="kw">await</span><span class="question-mark">?</span>;
-    <span class="macro">dbg!</span>(inf);
+    // let inf = DataTypesBmc::info(mm).await?;
+    // dbg!(inf);
 
-    <span class="prelude-val">Ok</span>(())
+    </span><span class="prelude-val">Ok</span>(())
 }
 
 <span class="doccomment">/// test UserBmc
