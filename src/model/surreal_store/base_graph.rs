@@ -20,20 +20,23 @@ where
     // child = "transaction:bzwmxto9yj8ffz4yega7"
     // MC::TABLE is a table name as string
     
-    // Does not work: expected a table name
+    // DOES NOT WORK: expected a table name
     let q = "RELATE $parent->$connection->$child;";
     
-    // Does not work: Failed to parse but type::table seems to work?
+    // DOES NOT WORK: Failed to parse but type::table seems to work?
     let q = "RELATE $parent->type::table($connection)->$child;";
     
-    // If parsed into <Thing> These also do not work
-    let parent: Thing = parent.parse().unwrap();
-    let child: Thing = child.parse().unwrap();
+    // If parsed into <Thing> or as string the next three also do not work
+    // let parent: Thing = parent.parse().unwrap();
+    // let child: Thing = child.parse().unwrap();
 
+    // DOES NOT WORK
     let q = "RELATE $parent->type::table($connection)->$child;";
 
+    // DOES NOT WORK
     let q = "RELATE type::thing($parent)->type::table($connection)->type::thing($child);";
     
+    // DOES NOT WORK
     let q = "RELATE type::record($parent)->type::table($connection)->type::record($child);";
 
     // WORKS
