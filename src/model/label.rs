@@ -6,15 +6,16 @@ use crate::model::ModelManager;
 #[allow(unused_imports)]
 use crate::model::{Error, Result};
 
-use super::surreal_store::base_crud::{
-    base_create_with_id, base_delete, base_get, base_list, base_update, SurrealBmc,
+use super::surreal_store::{
+    base_crud::{base_create_with_id, base_delete, base_get, base_list, base_update},
+    SurrealBmc,
 };
 
 // region: Types
 #[derive(Debug, Clone, Deserialize)]
 pub struct Label {
     pub id: Thing,
-    pub label_name: String
+    pub label_name: String,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -39,7 +40,8 @@ impl SurrealBmc for LabelBmc {
 impl LabelBmc {
     // CREATE
     pub async fn create(mm: &ModelManager, lbl_create: LabelForCreate) -> Result<Label> {
-        let res = base_create_with_id::<Self, _, _>(mm, &lbl_create, &lbl_create.label_name).await?;
+        let res =
+            base_create_with_id::<Self, _, _>(mm, &lbl_create, &lbl_create.label_name).await?;
 
         Ok(res)
     }

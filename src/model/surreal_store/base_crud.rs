@@ -7,14 +7,7 @@ use crate::model::{
     ModelManager,
 };
 
-/// Model Bmc Structs need to implement this trait.
-///
-/// And set the TABLE name.
-///
-/// The base... functions will use the TABLE name.
-pub trait SurrealBmc {
-    const TABLE: &'static str;
-}
+use super::SurrealBmc;
 
 /// Create the data in `content` in the `TABLE` of the calling model
 /// (Set by the impl of `SurrealBmc` in the parent calling model).

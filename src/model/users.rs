@@ -10,9 +10,9 @@ use crate::model::{Error, Result};
 
 #[allow(unused_imports)]
 use super::surreal_store::base_crud::{
-    base_create_with_id, base_delete, base_get, base_list, base_update, SurrealBmc,
+    base_create_with_id, base_delete, base_get, base_list, base_update,
 };
-
+use super::surreal_store::SurrealBmc;
 
 // region: Types
 #[derive(Debug, Clone, Deserialize)]
@@ -23,7 +23,7 @@ pub struct User {
     #[serde(with = "uuid::serde::compact")]
     pub salt: Uuid,
     #[serde(with = "uuid::serde::compact")]
-    pub salt_token: Uuid
+    pub salt_token: Uuid,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -32,7 +32,7 @@ pub struct UserForCreate {
     #[serde(with = "uuid::serde::compact")]
     pub salt: Uuid,
     #[serde(with = "uuid::serde::compact")]
-    pub salt_token: Uuid
+    pub salt_token: Uuid,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -40,11 +40,11 @@ pub struct UserForLogin {
     pub id: Thing,
 
     // -- pwd and token info
-	pub pwd: Option<String>, // encrypted, #_scheme_id_#....
+    pub pwd: Option<String>, // encrypted, #_scheme_id_#....
     #[serde(with = "uuid::serde::compact")]
-	pub salt: Uuid,
+    pub salt: Uuid,
     #[serde(with = "uuid::serde::compact")]
-	pub salt_token: Uuid,
+    pub salt_token: Uuid,
 }
 
 // endregion: Types
@@ -80,14 +80,12 @@ impl UserBmc {
         Ok(res)
     }
 
-
     // LIST ALL
     pub async fn list(mm: &ModelManager) -> Result<Vec<UserForLogin>> {
         let res = base_list::<Self, _>(mm).await?;
 
         Ok(res)
     }
-
 
     // UPDATE BY ID
 }

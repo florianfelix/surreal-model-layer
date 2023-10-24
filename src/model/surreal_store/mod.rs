@@ -1,5 +1,6 @@
 /// Isomorphic(?) functions the Model Controllers can call
 pub mod base_crud;
+pub mod base_graph;
 pub mod error;
 
 use surrealdb::{
@@ -9,6 +10,15 @@ use surrealdb::{
 };
 
 pub use self::error::{Error, Result};
+
+/// Model Bmc Structs need to implement this trait.
+///
+/// And set the TABLE name.
+///
+/// The base... functions will use the TABLE name.
+pub trait SurrealBmc {
+    const TABLE: &'static str;
+}
 
 pub type SrDb = Surreal<Client>;
 
