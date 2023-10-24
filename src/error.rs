@@ -19,6 +19,9 @@ impl From<model::Error> for Error {
 	}
 }
 
+// only needed to delete the tables in the main function
+// ideally this could be removed
+// only the model layer should care about the store errors
 impl From<surrealdb::Error> for Error {
 	fn from(val: surrealdb::Error) -> Self {
 		Self::Surreal(val)
