@@ -15,6 +15,8 @@ pub mod transaction;
 pub mod users;
 /// table to test the roundtrip of varying datatypes
 pub mod datatypes;
+/// graph connections
+pub mod edges;
 
 // endregion: Imports
 

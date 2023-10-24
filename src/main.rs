@@ -1,7 +1,7 @@
 //! This is an example of a Surreal Model Layer
-//! 
+//!
 //! The idea is to copy and adapt the model module.
-//! 
+//!
 //! main is only used to test the things in the model module
 
 #![allow(unused)]
@@ -16,6 +16,7 @@ use ulid::Ulid;
 use uuid::Uuid;
 
 use crate::model::datatypes::{DataTypesBmc, EmbededStruct};
+use crate::model::edges::EdgeBmc;
 use crate::model::label::{LabelBmc, LabelForCreate, LabelForUpdate};
 use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate};
 use crate::model::users::UserBmc;
@@ -33,7 +34,9 @@ async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
     delete_tables(&mm).await?;
 
-    test_datatypes(&mm).await?;
+    test_edges(&mm).await?;
+
+    // test_datatypes(&mm).await?;
 
     // test_users(&mm).await?;
 
@@ -51,9 +54,41 @@ async fn delete_tables(mm: &ModelManager) -> Result<()> {
     REMOVE TABLE transaction;
     REMOVE TABLE label;
     REMOVE TABLE user;
-    REMOVE TABLE datatypes";
+    REMOVE TABLE datatypes;
+    REMOVE TABLE edge;
+    ";
     let _res = srdb.query(sql).await?;
     // dbg!(_res);
+    Ok(())
+}
+
+async fn test_edges(mm: &ModelManager) -> Result<()> {
+    // first create two records in two tables to connect to each other
+    let username = "BobTheBuilder";
+    let user = UserBmc::create(mm, &username).await?;
+    dbg!(&user);
+
+    let tac = TransactionForCreate {
+        title: "Purchase plot of land".into(),
+        label: None,
+        amount: 33.45,
+    };
+    let ta = TransactionBmc::create(&mm, tac).await?;
+    dbg!(&ta);
+
+    let user_raw = user.id.to_raw();
+    let ta_raw = ta.id.to_raw();
+    dbg!(&user_raw);
+    dbg!(&ta_raw);
+
+    // now connect the two records
+    let conn = EdgeBmc::connect(mm, user_raw, ta_raw).await?;
+    // dbg!(&conn);
+
+    // list all created edges
+    let edges = EdgeBmc::list(mm).await?;
+    dbg!(&edges);
+
     Ok(())
 }
 
