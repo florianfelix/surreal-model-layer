@@ -2,7 +2,7 @@ use serde_json::Value;
 use surrealdb::sql::Thing;
 
 use super::{
-    surreal_store::{base_graph::{base_connect, base_list_connections}, SurrealBmc},
+    surreal_store::{base_graph::{base_connect, base_list_connections, base_list_outgoing, base_list_incoming}, SurrealBmc},
     ModelManager,
 };
 
@@ -27,6 +27,18 @@ impl EdgeBmc {
     /// List all connections
     pub async fn list(mm: &ModelManager) -> Result<Vec<Value>> {
         let res = base_list_connections::<Self, _>(mm).await?;
+        Ok(res)
+    }
+
+    /// List outgoing connections
+    pub async fn list_outgoing(mm: &ModelManager) -> Result<Vec<Value>> {
+        let res = base_list_outgoing::<Self, _>(mm).await?;
+        Ok(res)
+    }
+
+    /// List incoming connections
+    pub async fn list_incoming(mm: &ModelManager) -> Result<Vec<Value>> {
+        let res = base_list_incoming::<Self, _>(mm).await?;
         Ok(res)
     }
 }

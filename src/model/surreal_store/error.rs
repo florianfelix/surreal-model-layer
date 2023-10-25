@@ -17,6 +17,7 @@ pub enum Error {
     FailedToDeleteIdNotFound(String),
 
     FailedToCreateGraphConnection,
+    FailedToListGraphConnection,
 
     SurrealError(String),
 

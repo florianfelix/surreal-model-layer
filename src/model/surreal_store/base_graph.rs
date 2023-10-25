@@ -60,6 +60,53 @@ where
     // Ok(())
 }
 
+/// List all objects incoming from this connection
+pub async fn base_list_incoming<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
+where
+    MC: SurrealBmc,
+    R: DeserializeOwned,
+{
+    let srdb = mm.srdb().clone();
+
+    let q = "SELECT in FROM type::table($table);";
+
+    let mut response = srdb.query(q).bind(("table", MC::TABLE)).await?;
+
+    let incoming: Vec<R> = response.take(0)?;
+
+    Ok(incoming)
+}
+
+/// List all objects outgoing from this connection
+pub async fn base_list_outgoing<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
+where
+    MC: SurrealBmc,
+    R: DeserializeOwned,
+{
+    let srdb = mm.srdb().clone();
+
+    let q = "SELECT out FROM type::table($table);";
+
+    let mut response = srdb.query(q).bind(("table", MC::TABLE)).await?;
+
+    let outgoing: Vec<R> = response.take(0)?;
+
+    Ok(outgoing)
+}
+
+/// List all connections
+pub async fn base_list_connections<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
+where
+    MC: SurrealBmc,
+    R: DeserializeOwned,
+{
+    let srdb = mm.srdb().clone();
+    let res: Vec<R> = srdb.select(MC::TABLE).await?;
+    // dbg!(&res);
+
+    Ok(res)
+}
+
 /// Delete a connection
 pub async fn base_delete<MC, R>(mm: &ModelManager, id: Thing) -> Result<R>
 where
@@ -74,17 +121,4 @@ where
     } else {
         return Err(Error::FailedToDeleteIdNotFound(id.to_raw()));
     }
-}
-
-/// List all connections
-pub async fn base_list_connections<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
-where
-    MC: SurrealBmc,
-    R: DeserializeOwned,
-{
-    let srdb = mm.srdb().clone();
-    let res: Vec<R> = srdb.select(MC::TABLE).await?;
-    // dbg!(&res);
-
-    Ok(res)
 }
