@@ -47,12 +47,10 @@ where
         .bind(("child", child))
         .await?;
 
-    let created: Option<Value> = response.take(0)?;
-    dbg!(&created);
+    let created: Option<R> = response.take(0)?;
 
-    if let Some(val) = created {
-        let converted = serde_json::from_value(val)?;
-        return Ok(converted);
+    if let Some(created) = created {
+        return Ok(created);
     } else {
         return Err(Error::FailedToCreateGraphConnection);
     }
@@ -99,6 +97,7 @@ pub async fn base_list_connections<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
 where
     MC: SurrealBmc,
     R: DeserializeOwned,
+    // R: DeserializeOwned + std::fmt::Debug,
 {
     let srdb = mm.srdb().clone();
     let res: Vec<R> = srdb.select(MC::TABLE).await?;
@@ -114,6 +113,7 @@ where
     R: DeserializeOwned,
 {
     let srdb = mm.srdb().clone();
+
     let deleted: Option<R> = srdb.delete((MC::TABLE, id.to_raw())).await?;
 
     if let Some(deleted) = deleted {
