@@ -51,14 +51,14 @@
 <span class="kw">impl </span>EdgeBmc {
     <span class="doccomment">/// Connect two records
     </span><span class="kw">pub async fn </span>connect(mm: <span class="kw-2">&amp;</span>ModelManager, parent: Thing, child: Thing) -&gt; <span class="prelude-ty">Result</span>&lt;Value&gt; {
-        <span class="kw">let </span>res = base_connect::&lt;<span class="self">Self</span>&gt;(mm, parent, child).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>res = base_connect::&lt;<span class="self">Self</span>, <span class="kw">_</span>&gt;(mm, parent, child).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(res)
     }
 
     <span class="doccomment">/// List all connections
     </span><span class="kw">pub async fn </span>list(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Value&gt;&gt; {
-        <span class="kw">let </span>res = base_list_connections::&lt;<span class="self">Self</span>&gt;(mm).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>res = base_list_connections::&lt;<span class="self">Self</span>, <span class="kw">_</span>&gt;(mm).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(res)
     }
 }

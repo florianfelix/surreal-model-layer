@@ -183,7 +183,6 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{de::DeserializeOwned, Serialize};
 <span class="kw">use </span>serde_json::Value;
 <span class="kw">use </span>surrealdb::sql::Thing;
@@ -206,11 +205,18 @@
 {
     <span class="kw">let </span>srdb = mm.srdb().clone();
 
-    <span class="kw">let </span>created: Vec&lt;Value&gt; = srdb.create(MC::TABLE).content(content).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>q = <span class="string">&quot;CREATE type::table($table) CONTENT $content;&quot;</span>;
 
-    <span class="kw">if </span>created.len() &gt; <span class="number">0 </span>{
-        <span class="kw">let </span>converted = serde_json::from_value(created[<span class="number">0</span>].clone())<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+    <span class="kw">let </span><span class="kw-2">mut </span>response = srdb
+        .query(q)
+        .bind((<span class="string">&quot;table&quot;</span>, MC::TABLE))
+        .bind((<span class="string">&quot;content&quot;</span>, <span class="kw-2">&amp;</span>content))
+        .<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;R&gt; = response.take(<span class="number">0</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(created) = created {
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(created);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToCreate);
     }
@@ -227,11 +233,10 @@
 
     <span class="kw">let </span>id = ulid::Ulid::new().to_string();
 
-    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb.create((MC::TABLE, <span class="kw-2">&amp;</span>id)).content(content).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;R&gt; = srdb.create((MC::TABLE, id)).content(content).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(created) = created {
-        <span class="kw">let </span>converted = serde_json::from_value(created)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(created);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToCreate);
     }
@@ -248,8 +253,7 @@
 
     <span class="kw">let </span>q = <span class="string">r&quot;CREATE $thing CONTENT $content;&quot;</span>;
 
-    <span class="comment">// let identifier: Id = vec![ulid::Ulid::new().to_string(), id.to_string()].into();
-    </span><span class="kw">let </span>identifier = id;
+    <span class="kw">let </span>identifier = id;
 
     <span class="kw">let </span>thing: Thing = (MC::TABLE, identifier).into();
 
@@ -259,13 +263,10 @@
         .bind((<span class="string">&quot;content&quot;</span>, <span class="kw-2">&amp;</span>content))
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;Value&gt; = response.take(<span class="number">0</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>created: <span class="prelude-ty">Option</span>&lt;R&gt; = response.take(<span class="number">0</span>)<span class="question-mark">?</span>;
 
-    <span class="comment">// let created: Option&lt;Value&gt; = srdb.create((MC::TABLE, id)).content(content).await?;
-
-    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(created) = created {
-        <span class="kw">let </span>converted = serde_json::from_value(created)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(created) = created {
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(created);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToCreate);
     }
@@ -279,11 +280,10 @@
 {
     <span class="kw">let </span>srdb = mm.srdb().clone();
 
-    <span class="kw">let </span>selected: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb.select((MC::TABLE, id)).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>selected: <span class="prelude-ty">Option</span>&lt;R&gt; = srdb.select((MC::TABLE, id)).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(selected) = selected {
-        <span class="kw">let </span>converted = serde_json::from_value(selected)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(selected);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToGet(id.into()));
     }
@@ -298,11 +298,10 @@
 {
     <span class="kw">let </span>srdb = mm.srdb().clone();
 
-    <span class="kw">let </span>updated: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb.update((MC::TABLE, id)).content(data).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>updated: <span class="prelude-ty">Option</span>&lt;R&gt; = srdb.update((MC::TABLE, id)).content(data).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(updated) = updated {
-        <span class="kw">let </span>converted = serde_json::from_value(updated)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(updated);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToUpdate(id.into()));
     }
@@ -329,11 +328,10 @@
 {
     <span class="kw">let </span>srdb = mm.srdb().clone();
 
-    <span class="kw">let </span>deleted: <span class="prelude-ty">Option</span>&lt;Value&gt; = srdb.delete((MC::TABLE, id)).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>deleted: <span class="prelude-ty">Option</span>&lt;R&gt; = srdb.delete((MC::TABLE, id)).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if let </span><span class="prelude-val">Some</span>(deleted) = deleted {
-        <span class="kw">let </span>converted = serde_json::from_value(deleted)<span class="question-mark">?</span>;
-        <span class="kw">return </span><span class="prelude-val">Ok</span>(converted);
+        <span class="kw">return </span><span class="prelude-val">Ok</span>(deleted);
     } <span class="kw">else </span>{
         <span class="kw">return </span><span class="prelude-val">Err</span>(Error::FailedToDeleteIdNotFound(id.into()));
     }
