@@ -106,6 +106,27 @@ where
     Ok(res)
 }
 
+/// List connected to record
+pub async fn base_list_connected_ids_from_id<MC, R>(mm: &ModelManager, id: Thing) -> Result<Vec<R>>
+where
+    MC: SurrealBmc,
+    R: DeserializeOwned,
+{
+    let srdb = mm.srdb().clone();
+
+    let q = format!("SELECT  ->{}.out FROM $id", MC::TABLE);
+
+    let mut response = srdb
+        .query(q)
+        // .bind(("table", MC::TABLE))
+        .bind(("id", id))
+        .await?;
+
+    let connected: Vec<R> = response.take(0)?;
+
+    Ok(connected)
+}
+
 /// Delete a connection
 pub async fn base_delete<MC, R>(mm: &ModelManager, id: Thing) -> Result<R>
 where

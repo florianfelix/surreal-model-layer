@@ -90,7 +90,7 @@ async fn test_edges(mm: &ModelManager) -> Result<()> {
 
     // now connect the two records
     let conn = EdgeBmc::connect(mm, user_id.clone(), ta_id).await?;
-    let conn = EdgeBmc::connect(mm, user_id, ta_id2).await?;
+    let conn = EdgeBmc::connect(mm, user_id.clone(), ta_id2).await?;
     // dbg!(&conn);
 
     // list all created edges
@@ -104,6 +104,10 @@ async fn test_edges(mm: &ModelManager) -> Result<()> {
     // list incoming connections
     let incoming = EdgeBmc::list_incoming(mm).await?;
     dbg!(&incoming);
+
+    // list connected to id
+    let _ids = EdgeBmc::list_connected_ids_from_id(mm, user_id).await?;
+    dbg!(&_ids);
 
     // delete one end of the edge
     let deleted = TransactionBmc::delete(&mm, ta.id.id.to_raw()).await?;
