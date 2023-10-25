@@ -106,8 +106,8 @@ async fn test_edges(mm: &ModelManager) -> Result<()> {
     dbg!(&incoming);
 
     // list connected to id
-    let _ids = EdgeBmc::list_connected_ids_from_id(mm, user_id).await?;
-    dbg!(&_ids);
+    let ids = EdgeBmc::list_connected_ids_from_id(mm, user_id).await?;
+    dbg!(&ids);
 
     // delete one end of the edge
     let deleted = TransactionBmc::delete(&mm, ta.id.id.to_raw()).await?;
