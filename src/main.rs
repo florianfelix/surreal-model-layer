@@ -47,7 +47,7 @@ async fn main() -> Result<()> {
 
     // test_users(&mm).await?;
 
-    test_labelbmc(&mm).await?;
+    // test_labelbmc(&mm).await?;
 
     // test_transactionbmc(&mm).await?;
 
