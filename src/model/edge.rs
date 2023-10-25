@@ -17,13 +17,14 @@ impl SurrealBmc for EdgeBmc {
 }
 
 impl EdgeBmc {
+    /// Connect two records
     pub async fn connect(mm: &ModelManager, parent: Thing, child: Thing) -> Result<Value> {
         let res = base_connect::<Self>(mm, parent, child).await?;
 
         Ok(res)
     }
 
-
+    /// List all connections
     pub async fn list(mm: &ModelManager) -> Result<Vec<Value>> {
         let res = base_list_connections::<Self>(mm).await?;
         Ok(res)

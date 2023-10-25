@@ -7,16 +7,16 @@ pub use self::error::{Error, Result};
 pub mod error;
 /// base functions for the specific BMCs
 pub mod surreal_store;
-/// specific data model. uses the base functions.
+/// LabelBmc. Everything for the `label` table
 pub mod label;
-/// specific data model. uses the base functions.
+/// TransactionBmc. Everything for the `transaction` table
 pub mod transaction;
-/// specific data model. uses the base functions.
+/// UserBmc. Everything for the `user` table
 pub mod users;
-/// table to test the roundtrip of varying datatypes
+/// DatatypesBmc. Table to test the roundtrip of varying datatypes
 pub mod datatypes;
-/// graph connections
-pub mod edges;
+/// EdgeBmc. graph connections
+pub mod edge;
 
 // endregion: Imports
 

@@ -1,3 +1,5 @@
+/// `user` table with needed structs and functions
+
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 use uuid;
@@ -49,15 +51,17 @@ pub struct UserForLogin {
 
 // endregion: Types
 
+/// Unitstruct which holds all functions for the `user` table
 pub struct UserBmc;
 
+/// The name of the table in the database
 impl SurrealBmc for UserBmc {
     const TABLE: &'static str = "user";
 }
 
 // region: UserBmc
 impl UserBmc {
-    // CREATE
+    /// Create a new user with new_user_name as id in table user
     pub async fn create(mm: &ModelManager, new_user_name: &str) -> Result<User> {
         let salt = Uuid::new_v4();
         let salt_token = Uuid::new_v4();
@@ -73,14 +77,14 @@ impl UserBmc {
         Ok(res)
     }
 
-    // GET BY ID
+    /// Get a user by id (String)
     pub async fn get(mm: &ModelManager, id: String) -> Result<User> {
         let res = base_get::<Self, _>(mm, &id).await?;
 
         Ok(res)
     }
 
-    // LIST ALL
+    /// List all users
     pub async fn list(mm: &ModelManager) -> Result<Vec<UserForLogin>> {
         let res = base_list::<Self, _>(mm).await?;
 

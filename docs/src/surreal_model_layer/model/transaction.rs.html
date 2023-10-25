@@ -104,12 +104,18 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>surrealdb::sql::Thing;
 
-<span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
-    base_create, base_create_with_id, base_create_with_ulid, base_delete, base_get, base_list,
-    base_update, SurrealBmc,
+<span class="kw">use </span><span class="kw">super</span>::surreal_store::{
+    base_crud::{
+        base_create, base_create_with_id, base_create_with_ulid, base_delete, base_get, base_list,
+        base_update,
+    },
+    SurrealBmc,
 };
 <span class="comment">// use super::surreal_store::transaction::TransactionBmcBase;
 </span><span class="kw">use </span><span class="kw">crate</span>::model::ModelManager;

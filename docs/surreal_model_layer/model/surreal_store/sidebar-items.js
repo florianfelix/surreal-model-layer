@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["new_surreal_connection"],"mod":["base_crud","error"],"type":["SrDb"]};
+window.SIDEBAR_ITEMS = {"fn":["new_surreal_connection"],"mod":["base_crud","base_graph","error"],"trait":["SurrealBmc"],"type":["SrDb"]};

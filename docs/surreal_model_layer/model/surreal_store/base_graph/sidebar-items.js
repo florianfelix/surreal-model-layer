@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["base_connect","base_list_connections"]};

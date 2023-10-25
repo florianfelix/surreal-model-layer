@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["datatypes","error","label","surreal_store","transaction","users"],"struct":["ModelManager"]};
+window.SIDEBAR_ITEMS = {"mod":["datatypes","edge","error","label","surreal_store","transaction","users"],"struct":["ModelManager"]};

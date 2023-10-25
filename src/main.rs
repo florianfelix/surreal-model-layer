@@ -16,7 +16,7 @@ use ulid::Ulid;
 use uuid::Uuid;
 
 use crate::model::datatypes::{DataTypesBmc, EmbededStruct};
-use crate::model::edges::EdgeBmc;
+use crate::model::edge::EdgeBmc;
 use crate::model::label::{LabelBmc, LabelForCreate, LabelForUpdate};
 use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate};
 use crate::model::users::UserBmc;
@@ -24,15 +24,22 @@ use crate::model::ModelManager;
 
 pub use self::error::{Error, Result};
 
+/// holds the model errors
 mod error;
-/// BackendModelControllers for custom tables
+
+/// BackendModelControllers for custom tables. Start looking here.
+/// 
+/// In `surreal_store` are the base functions for the specific BMCs.
+/// Basic CRUD should be possible with those.
+/// Anything more complicated and/or custom for specific tables
+/// should then be implemented in their own modules.
 mod model;
 
 /// call the test_... functions
 #[tokio::main]
 async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
-    delete_tables(&mm).await?;
+    test_delete_tables(&mm).await?;
 
     test_edges(&mm).await?;
 
@@ -48,7 +55,7 @@ async fn main() -> Result<()> {
 }
 
 /// start with deleting existing tables to begin afresh
-async fn delete_tables(mm: &ModelManager) -> Result<()> {
+async fn test_delete_tables(mm: &ModelManager) -> Result<()> {
     let srdb = mm.srdb().clone();
     let sql = "
     REMOVE TABLE transaction;

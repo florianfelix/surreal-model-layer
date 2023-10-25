@@ -93,7 +93,11 @@
 <a href="#93" id="93">93</a>
 <a href="#94" id="94">94</a>
 <a href="#95" id="95">95</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+</pre></div><pre class="rust"><code><span class="doccomment">/// `user` table with needed structs and functions
+
+</span><span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>surrealdb::sql::Thing;
 <span class="kw">use </span>uuid;
 <span class="kw">use </span>uuid::Uuid;
@@ -105,9 +109,9 @@
 
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span><span class="kw">super</span>::surreal_store::base_crud::{
-    base_create_with_id, base_delete, base_get, base_list, base_update, SurrealBmc,
+    base_create_with_id, base_delete, base_get, base_list, base_update,
 };
-
+<span class="kw">use </span><span class="kw">super</span>::surreal_store::SurrealBmc;
 
 <span class="comment">// region: Types
 </span><span class="attr">#[derive(Debug, Clone, Deserialize)]
@@ -118,7 +122,7 @@
     <span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
     </span><span class="kw">pub </span>salt: Uuid,
     <span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
-    </span><span class="kw">pub </span>salt_token: Uuid
+    </span><span class="kw">pub </span>salt_token: Uuid,
 }
 
 <span class="attr">#[derive(Debug, Clone, Serialize)]
@@ -127,7 +131,7 @@
     <span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
     </span><span class="kw">pub </span>salt: Uuid,
     <span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
-    </span><span class="kw">pub </span>salt_token: Uuid
+    </span><span class="kw">pub </span>salt_token: Uuid,
 }
 
 <span class="attr">#[derive(Debug, Clone, Deserialize)]
@@ -135,24 +139,26 @@
     <span class="kw">pub </span>id: Thing,
 
     <span class="comment">// -- pwd and token info
-	</span><span class="kw">pub </span>pwd: <span class="prelude-ty">Option</span>&lt;String&gt;, <span class="comment">// encrypted, #_scheme_id_#....
+    </span><span class="kw">pub </span>pwd: <span class="prelude-ty">Option</span>&lt;String&gt;, <span class="comment">// encrypted, #_scheme_id_#....
     </span><span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
-	</span><span class="kw">pub </span>salt: Uuid,
+    </span><span class="kw">pub </span>salt: Uuid,
     <span class="attr">#[serde(with = <span class="string">&quot;uuid::serde::compact&quot;</span>)]
-	</span><span class="kw">pub </span>salt_token: Uuid,
+    </span><span class="kw">pub </span>salt_token: Uuid,
 }
 
 <span class="comment">// endregion: Types
 
+</span><span class="doccomment">/// Unitstruct which holds all functions for the `user` table
 </span><span class="kw">pub struct </span>UserBmc;
 
-<span class="kw">impl </span>SurrealBmc <span class="kw">for </span>UserBmc {
+<span class="doccomment">/// The name of the table in the database
+</span><span class="kw">impl </span>SurrealBmc <span class="kw">for </span>UserBmc {
     <span class="kw">const </span>TABLE: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str = <span class="string">&quot;user&quot;</span>;
 }
 
 <span class="comment">// region: UserBmc
 </span><span class="kw">impl </span>UserBmc {
-    <span class="comment">// CREATE
+    <span class="doccomment">/// Create a new user with new_user_name as id in table user
     </span><span class="kw">pub async fn </span>create(mm: <span class="kw-2">&amp;</span>ModelManager, new_user_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;User&gt; {
         <span class="kw">let </span>salt = Uuid::new_v4();
         <span class="kw">let </span>salt_token = Uuid::new_v4();
@@ -168,23 +174,22 @@
         <span class="prelude-val">Ok</span>(res)
     }
 
-    <span class="comment">// GET BY ID
+    <span class="doccomment">/// Get a user by id (String)
     </span><span class="kw">pub async fn </span>get(mm: <span class="kw-2">&amp;</span>ModelManager, id: String) -&gt; <span class="prelude-ty">Result</span>&lt;User&gt; {
         <span class="kw">let </span>res = base_get::&lt;<span class="self">Self</span>, <span class="kw">_</span>&gt;(mm, <span class="kw-2">&amp;</span>id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(res)
     }
 
-
-    <span class="comment">// LIST ALL
+    <span class="doccomment">/// List all users
     </span><span class="kw">pub async fn </span>list(mm: <span class="kw-2">&amp;</span>ModelManager) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;UserForLogin&gt;&gt; {
         <span class="kw">let </span>res = base_list::&lt;<span class="self">Self</span>, <span class="kw">_</span>&gt;(mm).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(res)
     }
 
-
     <span class="comment">// UPDATE BY ID
 </span>}
 
-<span class="comment">// endregion: UserBmc</span></code></pre></div></section></main></body></html>
+<span class="comment">// endregion: UserBmc
+</span></code></pre></div></section></main></body></html>
