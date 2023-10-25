@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
 use surrealdb::sql::{Thing, statements::RelateStatement};
@@ -9,16 +11,19 @@ use crate::model::{
 
 use super::SurrealBmc;
 
-pub async fn base_connect<MC>(mm: &ModelManager, parent: String, child: String) -> Result<Value>
+pub async fn base_connect<MC>(mm: &ModelManager, parent: Thing, child: Thing) -> Result<Value>
 where
     MC: SurrealBmc,
 {
     let srdb = mm.srdb().clone();
 
-    // parent and child are Thing.to_raw() strings
+    // parent and child are Thing
     // parent = "user:BobTheBuilder"
     // child = "transaction:bzwmxto9yj8ffz4yega7"
-    // MC::TABLE is a table name as string
+    // MC::TABLE is a table name as &str
+
+    // let parent = parent.to_raw();
+    // let child = child.to_raw();
     
     // DOES NOT WORK: expected a table name
     let q = "RELATE $parent->$connection->$child;";
@@ -26,13 +31,6 @@ where
     // DOES NOT WORK: Failed to parse but type::table seems to work?
     let q = "RELATE $parent->type::table($connection)->$child;";
     
-    // If parsed into <Thing> or as string the next three also do not work
-    // let parent: Thing = parent.parse().unwrap();
-    // let child: Thing = child.parse().unwrap();
-
-    // DOES NOT WORK
-    let q = "RELATE $parent->type::table($connection)->$child;";
-
     // DOES NOT WORK
     let q = "RELATE type::thing($parent)->type::table($connection)->type::thing($child);";
     

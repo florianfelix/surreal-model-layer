@@ -1,4 +1,5 @@
 use serde_json::Value;
+use surrealdb::sql::Thing;
 
 use super::{
     surreal_store::{base_graph::{base_connect, base_list_connections}, SurrealBmc},
@@ -16,7 +17,7 @@ impl SurrealBmc for EdgeBmc {
 }
 
 impl EdgeBmc {
-    pub async fn connect(mm: &ModelManager, parent: String, child: String) -> Result<Value> {
+    pub async fn connect(mm: &ModelManager, parent: Thing, child: Thing) -> Result<Value> {
         let res = base_connect::<Self>(mm, parent, child).await?;
 
         Ok(res)

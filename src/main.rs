@@ -76,18 +76,24 @@ async fn test_edges(mm: &ModelManager) -> Result<()> {
     let ta = TransactionBmc::create(&mm, tac).await?;
     dbg!(&ta);
 
-    let user_raw = user.id.to_raw();
-    let ta_raw = ta.id.to_raw();
-    dbg!(&user_raw);
-    dbg!(&ta_raw);
+    let user_id = user.id.clone();
+    let ta_id = ta.id.clone();
 
     // now connect the two records
-    let conn = EdgeBmc::connect(mm, user_raw, ta_raw).await?;
+    let conn = EdgeBmc::connect(mm, user_id, ta_id).await?;
     // dbg!(&conn);
 
     // list all created edges
     let edges = EdgeBmc::list(mm).await?;
     dbg!(&edges);
+
+    // delete one end of the edge
+    let deleted = TransactionBmc::delete(&mm, ta.id.id.to_raw()).await?;
+    dbg!(&deleted);
+
+    // list all remaining? edges
+    let edges_remaining = EdgeBmc::list(mm).await?;
+    dbg!(&edges_remaining);
 
     Ok(())
 }
