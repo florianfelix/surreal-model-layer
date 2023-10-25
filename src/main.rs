@@ -47,7 +47,7 @@ async fn main() -> Result<()> {
 
     // test_users(&mm).await?;
 
-    // test_labelbamc(&mm).await?;
+    test_labelbmc(&mm).await?;
 
     // test_transactionbmc(&mm).await?;
 
@@ -231,7 +231,7 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
 }
 
 /// test LabelBmc
-async fn test_labelbamc(mm: &ModelManager) -> Result<()> {
+async fn test_labelbmc(mm: &ModelManager) -> Result<()> {
     // CREATE LABEL
     let created = LabelBmc::create(
         &mm,

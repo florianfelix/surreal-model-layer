@@ -34,7 +34,7 @@ pub struct LabelForUpdate {
 pub struct LabelBmc;
 
 impl SurrealBmc for LabelBmc {
-    const TABLE: &'static str = "labels";
+    const TABLE: &'static str = "label";
 }
 
 impl LabelBmc {
