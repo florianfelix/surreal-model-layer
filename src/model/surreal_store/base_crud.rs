@@ -20,11 +20,18 @@ where
 {
     let srdb = mm.srdb().clone();
 
-    let created: Vec<Value> = srdb.create(MC::TABLE).content(content).await?;
+    let q = "CREATE type::table($table) CONTENT $content;";
 
-    if created.len() > 0 {
-        let converted = serde_json::from_value(created[0].clone())?;
-        return Ok(converted);
+    let mut response = srdb
+        .query(q)
+        .bind(("table", MC::TABLE))
+        .bind(("content", &content))
+        .await?;
+
+    let created: Option<R> = response.take(0)?;
+
+    if let Some(created) = created {
+        return Ok(created);
     } else {
         return Err(Error::FailedToCreate);
     }
@@ -41,11 +48,10 @@ where
 
     let id = ulid::Ulid::new().to_string();
 
-    let created: Option<Value> = srdb.create((MC::TABLE, &id)).content(content).await?;
+    let created: Option<R> = srdb.create((MC::TABLE, id)).content(content).await?;
 
     if let Some(created) = created {
-        let converted = serde_json::from_value(created)?;
-        return Ok(converted);
+        return Ok(created);
     } else {
         return Err(Error::FailedToCreate);
     }
@@ -62,7 +68,6 @@ where
 
     let q = r"CREATE $thing CONTENT $content;";
 
-    // let identifier: Id = vec![ulid::Ulid::new().to_string(), id.to_string()].into();
     let identifier = id;
 
     let thing: Thing = (MC::TABLE, identifier).into();
@@ -73,13 +78,10 @@ where
         .bind(("content", &content))
         .await?;
 
-    let created: Option<Value> = response.take(0)?;
-
-    // let created: Option<Value> = srdb.create((MC::TABLE, id)).content(content).await?;
+    let created: Option<R> = response.take(0)?;
 
     if let Some(created) = created {
-        let converted = serde_json::from_value(created)?;
-        return Ok(converted);
+        return Ok(created);
     } else {
         return Err(Error::FailedToCreate);
     }
@@ -93,11 +95,10 @@ where
 {
     let srdb = mm.srdb().clone();
 
-    let selected: Option<Value> = srdb.select((MC::TABLE, id)).await?;
+    let selected: Option<R> = srdb.select((MC::TABLE, id)).await?;
 
     if let Some(selected) = selected {
-        let converted = serde_json::from_value(selected)?;
-        return Ok(converted);
+        return Ok(selected);
     } else {
         return Err(Error::FailedToGet(id.into()));
     }
@@ -112,11 +113,10 @@ where
 {
     let srdb = mm.srdb().clone();
 
-    let updated: Option<Value> = srdb.update((MC::TABLE, id)).content(data).await?;
+    let updated: Option<R> = srdb.update((MC::TABLE, id)).content(data).await?;
 
     if let Some(updated) = updated {
-        let converted = serde_json::from_value(updated)?;
-        return Ok(converted);
+        return Ok(updated);
     } else {
         return Err(Error::FailedToUpdate(id.into()));
     }
@@ -143,11 +143,10 @@ where
 {
     let srdb = mm.srdb().clone();
 
-    let deleted: Option<Value> = srdb.delete((MC::TABLE, id)).await?;
+    let deleted: Option<R> = srdb.delete((MC::TABLE, id)).await?;
 
     if let Some(deleted) = deleted {
-        let converted = serde_json::from_value(deleted)?;
-        return Ok(converted);
+        return Ok(deleted);
     } else {
         return Err(Error::FailedToDeleteIdNotFound(id.into()));
     }
