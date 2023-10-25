@@ -1,3 +1,4 @@
+use serde::de::DeserializeOwned;
 use serde_json::Value;
 use surrealdb::sql::Thing;
 
@@ -9,9 +10,10 @@ use crate::model::{
 use super::SurrealBmc;
 
 /// Connect two records
-pub async fn base_connect<MC>(mm: &ModelManager, parent: Thing, child: Thing) -> Result<Value>
+pub async fn base_connect<MC, R>(mm: &ModelManager, parent: Thing, child: Thing) -> Result<R>
 where
     MC: SurrealBmc,
+    R: DeserializeOwned,
 {
     let srdb = mm.srdb().clone();
 
@@ -58,13 +60,30 @@ where
     // Ok(())
 }
 
-/// List all connections
-pub async fn base_list_connections<MC>(mm: &ModelManager) -> Result<Vec<Value>>
+/// Delete a connection
+pub async fn base_delete<MC, R>(mm: &ModelManager, id: Thing) -> Result<R>
 where
     MC: SurrealBmc,
+    R: DeserializeOwned,
 {
     let srdb = mm.srdb().clone();
-    let res: Vec<Value> = srdb.select(MC::TABLE).await?;
+    let deleted: Option<R> = srdb.delete((MC::TABLE, id.to_raw())).await?;
+
+    if let Some(deleted) = deleted {
+        return Ok(deleted);
+    } else {
+        return Err(Error::FailedToDeleteIdNotFound(id.to_raw()));
+    }
+}
+
+/// List all connections
+pub async fn base_list_connections<MC, R>(mm: &ModelManager) -> Result<Vec<R>>
+where
+    MC: SurrealBmc,
+    R: DeserializeOwned,
+{
+    let srdb = mm.srdb().clone();
+    let res: Vec<R> = srdb.select(MC::TABLE).await?;
     // dbg!(&res);
 
     Ok(res)
