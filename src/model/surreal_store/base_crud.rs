@@ -157,7 +157,6 @@ where
     MC: SurrealBmc,
 {
     let srdb = mm.srdb().clone();
-    srdb.use_ns("test").use_db("test").await?;
 
     let q = format!("INFO FOR TABLE {};", MC::TABLE);
 
