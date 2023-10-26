@@ -41,9 +41,9 @@ async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
     test_delete_tables(&mm).await?;
 
-    test_edges(&mm).await?;
+    // test_edges(&mm).await?;
 
-    // test_datatypes(&mm).await?;
+    test_datatypes(&mm).await?;
 
     // test_users(&mm).await?;
 
@@ -163,8 +163,8 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
     let listed = DataTypesBmc::list(mm).await?;
     // dbg!(listed);
 
-    // let inf = DataTypesBmc::info(mm).await?;
-    // dbg!(inf);
+    let inf = DataTypesBmc::info(mm).await?;
+    dbg!(inf);
 
     Ok(())
 }

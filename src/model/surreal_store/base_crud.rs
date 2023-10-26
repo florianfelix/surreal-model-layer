@@ -159,27 +159,15 @@ where
     let srdb = mm.srdb().clone();
     srdb.use_ns("test").use_db("test").await?;
 
-    let q = r"
-    INFO FOR TABLE type::table($tablename);
-    ";
+    let q = format!("INFO FOR TABLE {};", MC::TABLE);
 
-    let q = format!(
-        "
-    INFO FOR TABLE {};
-    ",
-        MC::TABLE
-    );
-
-    println!("TABLEINFO: {}", MC::TABLE);
-
-    let mut res = srdb.query(q).await?;
+    let mut res = srdb.query(&q).await?;
 
     let val: Option<Value> = res.take(0)?;
 
     if let Some(val) = val {
-        let converted = serde_json::from_value(val)?;
-        return Ok(converted);
+        return Ok(val);
     } else {
-        return Err(Error::FailedToCreate);
+        return Err(Error::FailedQuery(q));
     }
 }

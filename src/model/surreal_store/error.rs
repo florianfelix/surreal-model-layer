@@ -19,6 +19,8 @@ pub enum Error {
     FailedToCreateGraphConnection,
     FailedToListGraphConnection,
 
+    FailedQuery(String),
+
     SurrealError(String),
 
     DeserializeError(String),
