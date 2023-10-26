@@ -9,6 +9,7 @@ use crate::model::ModelManager;
 #[allow(unused_imports)]
 use crate::model::{Error, Result};
 
+use bigdecimal::BigDecimal;
 use chrono::{DateTime, Local, NaiveDate};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -50,6 +51,7 @@ pub struct DataTypesForCreate {
     pub naivedate: NaiveDate,
     pub record: Thing,
     pub record_string: String,
+    pub money: BigDecimal,
 }
 
 // endregion: Types

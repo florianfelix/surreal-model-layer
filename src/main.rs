@@ -9,6 +9,7 @@
 #![allow(dead_code)]
 use std::collections::HashMap;
 
+use bigdecimal::BigDecimal;
 use chrono::Local;
 use model::datatypes::DataTypesForCreate;
 use surrealdb::sql::Thing;
@@ -40,6 +41,7 @@ mod model;
 async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
     test_delete_tables(&mm).await?;
+    test_create_schemaful(&mm).await?;
 
     // test_edges(&mm).await?;
 
@@ -66,6 +68,25 @@ async fn test_delete_tables(mm: &ModelManager) -> Result<()> {
     ";
     let _res = srdb.query(sql).await?;
     // dbg!(_res);
+    Ok(())
+}
+
+async fn test_create_schemaful(mm: &ModelManager) -> Result<()> {
+    let srdb = mm.srdb().clone();
+
+    let sql = "
+    BEGIN TRANSACTION;
+
+    DEFINE TABLE transaction;
+    DEFINE FIELD title ON TABLE transaction TYPE option<string>;
+    DEFINE FIELD label ON TABLE transaction TYPE option<record>;
+    DEFINE FIELD amount ON TABLE transaction TYPE float;
+
+    COMMIT TRANSACTION;
+    ";
+
+    let schemaful_query = srdb.query(sql).await?;
+    // dbg!(schemaful_query);
     Ok(())
 }
 
@@ -153,6 +174,7 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         naivedate: Local::now().naive_local().date(),
         record: record.clone(),
         record_string: record.to_raw(),
+        money: BigDecimal::from(((12.50 * 100.) as i64, 2)),
     };
 
     // let data = DataTypesForCreate::default();
@@ -195,10 +217,11 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     let ta1 = TransactionForCreate {
         title: "First Transaction".into(),
         label: None,
+        // amount: 33.45,
         amount: 33.45,
     };
     let created = TransactionBmc::create(&mm, ta1).await?;
-    // dbg!(created);
+    dbg!(&created);
 
     // CREATE -- ULID
     let ta2 = TransactionForCreate {
@@ -207,19 +230,19 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
         amount: 55.45,
     };
     let created_ulid = TransactionBmc::create_ulid(&mm, ta2).await?;
-    // dbg!(created_ulid);
+    dbg!(&created_ulid);
 
     // CREATE -- ID
     let ta3 = TransactionForCreate {
         title: "Third Transaction".into(),
         label: Some(Thing {
-            tb: "labels".to_string(),
+            tb: "label".to_string(),
             id: "My first Label".into(),
         }),
         amount: 89.12,
     };
     let created_id = TransactionBmc::create_with_id(&mm, "Third Transaction".into(), ta3).await?;
-    // dbg!(created_id);
+    dbg!(&created_id);
 
     // GET -- BY ID
     let gotten = TransactionBmc::get(&mm, "Third Transaction".into()).await?;
@@ -228,10 +251,13 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     // UPDATE -- BY ID
     let taupdate = TransactionForUpdate {
         title: Some("Third Transaction Updated".to_string()),
-        label: None,
+        label: Some(Thing {
+            tb: "label".to_string(),
+            id: "The Second Label".into(),
+        }),
         amount: Some(64.89),
     };
-    let updated = TransactionBmc::update(&mm, "Third Transaction".into(), taupdate).await?;
+    let updated = TransactionBmc::update(&mm, created_ulid.clone().id.id.to_raw(), taupdate).await?;
     // dbg!(updated);
 
     // LIST -- ALL
@@ -239,7 +265,7 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     dbg!(listed);
 
     // DELETE -- BY ID
-    let delted = TransactionBmc::delete(&mm, created.id.id.to_string()).await?;
+    let delted = TransactionBmc::delete(&mm, created.id.id.to_raw()).await?;
     dbg!(delted);
 
     Ok(())
