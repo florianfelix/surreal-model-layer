@@ -174,7 +174,7 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         naivedate: Local::now().naive_local().date(),
         record: record.clone(),
         record_string: record.to_raw(),
-        money: BigDecimal::from(((12.50 * 100.) as i64, 2)),
+        money: BigDecimal::from(((12.55 * 100.) as i64, 2)),
     };
 
     // let data = DataTypesForCreate::default();
