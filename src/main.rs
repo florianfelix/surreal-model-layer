@@ -20,7 +20,7 @@ use crate::model::datatypes::{DataTypesBmc, EmbededStruct};
 use crate::model::edge::EdgeBmc;
 use crate::model::label::{LabelBmc, LabelForCreate, LabelForUpdate};
 use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate};
-use crate::model::users::UserBmc;
+use crate::model::user::UserBmc;
 use crate::model::ModelManager;
 
 pub use self::error::{Error, Result};
@@ -29,7 +29,7 @@ pub use self::error::{Error, Result};
 mod error;
 
 /// BackendModelControllers for custom tables. Start looking here.
-/// 
+///
 /// In `surreal_store` are the base functions for the specific BMCs.
 /// Basic CRUD should be possible with those.
 /// Anything more complicated and/or custom for specific tables
@@ -45,9 +45,9 @@ async fn main() -> Result<()> {
 
     // test_edges(&mm).await?;
 
-    test_datatypes(&mm).await?;
+    // test_datatypes(&mm).await?;
 
-    // test_users(&mm).await?;
+    test_users(&mm).await?;
 
     // test_labelbmc(&mm).await?;
 
@@ -74,7 +74,7 @@ async fn test_delete_tables(mm: &ModelManager) -> Result<()> {
 async fn test_create_schemaful(mm: &ModelManager) -> Result<()> {
     let srdb = mm.srdb().clone();
 
-    let sql = "
+    let sql_ta_table = "
     BEGIN TRANSACTION;
 
     DEFINE TABLE transaction;
@@ -85,15 +85,49 @@ async fn test_create_schemaful(mm: &ModelManager) -> Result<()> {
     COMMIT TRANSACTION;
     ";
 
-    let schemaful_query = srdb.query(sql).await?;
+    let schemaful_query = srdb.query(sql_ta_table).await?;
     // dbg!(schemaful_query);
+
+    //PERMISSIONS FOR create, select, update, delete WHERE id = $auth.id
+
+    let sql_user_table = r#"
+    BEGIN TRANSACTION;
+
+    DEFINE TABLE user SCHEMAFULL
+	PERMISSIONS
+    FOR update, delete WHERE id = $auth.id;
+
+    DEFINE FIELD name ON user TYPE string;
+    DEFINE FIELD email ON user TYPE string ASSERT string::is::email($value);
+    DEFINE FIELD password ON user TYPE string;
+
+    DEFINE INDEX email ON user FIELDS email UNIQUE;
+
+    DEFINE SCOPE user SESSION 24h
+    SIGNUP (
+		CREATE user CONTENT {
+			name: $name,
+			email: $email,
+			password: crypto::argon2::generate($password)
+		}
+	)
+    SIGNIN ( SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password) );
+
+    COMMIT TRANSACTION;
+    "#;
+
+    let schemaful_query = srdb.query(sql_user_table).await?;
+    // dbg!(schemaful_query);
+
     Ok(())
 }
 
 async fn test_edges(mm: &ModelManager) -> Result<()> {
     // first create two records in two tables to connect to each other
     let username = "BobTheBuilder";
-    let user = UserBmc::create(mm, &username).await?;
+    let email = "bob@builder.com";
+    let password = "clear_password";
+    let user = UserBmc::create(mm, &username, email, password).await?;
     dbg!(&user);
 
     let tac = TransactionForCreate {
@@ -193,14 +227,24 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
 
 /// test UserBmc
 async fn test_users(mm: &ModelManager) -> Result<()> {
-    let new_user_name = "TheFirstUser";
-    let new_user = UserBmc::create(mm, new_user_name.into()).await?;
-    dbg!(&new_user);
 
-    let new_user_name = "TheSecondUser";
-    let new_user = UserBmc::create(mm, new_user_name.into()).await?;
-    dbg!(&new_user);
+    let jwt = UserBmc::signup(mm, "signupname", "signup@user.com", "clear_password").await?;
+    let jwt = UserBmc::signup(mm, "signupname2", "signup2@user.com", "clear_password").await?;
+    // let jwt = UserBmc::signin(mm, "signup@user.com", "clear_password").await?;
 
+
+    let new_user = UserBmc::create(mm, "FirstUser", "first@user.com", "clear_password").await?;
+    // let jwt = UserBmc::signin(mm, "first@user.com", "clear_password").await?;
+    // dbg!(&new_user);
+
+    // let signed_in = UserBmc::login(mm, new_user_email, new_user_password).await?;
+    // dbg!(&signed_in);
+
+    // let new_user = UserBmc::create(mm, "SecondUser", "second@user.com", "clear_password").await?;
+    // dbg!(&new_user);
+
+    // let signed_in = UserBmc::login(mm, new_user_email, new_user_password).await?;
+    // dbg!(&signed_in);
     // let gotten = UserBmc::get(mm, new_user.id.id.to_string()).await?;
     // dbg!(gotten);
 
@@ -257,7 +301,8 @@ async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
         }),
         amount: Some(64.89),
     };
-    let updated = TransactionBmc::update(&mm, created_ulid.clone().id.id.to_raw(), taupdate).await?;
+    let updated =
+        TransactionBmc::update(&mm, created_ulid.clone().id.id.to_raw(), taupdate).await?;
     // dbg!(updated);
 
     // LIST -- ALL

@@ -12,7 +12,7 @@ pub mod label;
 /// TransactionBmc. Everything for the `transaction` table
 pub mod transaction;
 /// UserBmc. Everything for the `user` table
-pub mod users;
+pub mod user;
 /// DatatypesBmc. Table to test the roundtrip of varying datatypes
 pub mod datatypes;
 /// EdgeBmc. graph connections
