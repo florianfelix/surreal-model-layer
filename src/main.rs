@@ -231,9 +231,11 @@ async fn test_users(mm: &ModelManager) -> Result<()> {
     let jwt = UserBmc::signup(mm, "signupname", "signup@user.com", "clear_password").await?;
     let jwt = UserBmc::signup(mm, "signupname2", "signup2@user.com", "clear_password").await?;
     // let jwt = UserBmc::signin(mm, "signup@user.com", "clear_password").await?;
+    let verified = UserBmc::verify_user_pw(mm, "signup@user.com", "clear_password").await?;
+    dbg!(&verified);
 
 
-    let new_user = UserBmc::create(mm, "FirstUser", "first@user.com", "clear_password").await?;
+    // let new_user = UserBmc::create(mm, "FirstUser", "first@user.com", "clear_password").await?;
     // let jwt = UserBmc::signin(mm, "first@user.com", "clear_password").await?;
     // dbg!(&new_user);
 

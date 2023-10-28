@@ -16,6 +16,8 @@ pub enum Error {
     FailedToUpdate(String),
     FailedToDeleteIdNotFound(String),
 
+    FailedToVerifyPassword((String, String)),
+
     FailedToCreateGraphConnection,
     FailedToListGraphConnection,
 

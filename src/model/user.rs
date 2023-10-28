@@ -1,7 +1,10 @@
 /// `user` table with needed structs and functions
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use surrealdb::{sql::Thing, opt::auth::{Scope, Jwt, Root}};
+use surrealdb::{
+    opt::auth::{Jwt, Root, Scope},
+    sql::Thing,
+};
 use uuid;
 use uuid::Uuid;
 
@@ -62,13 +65,14 @@ impl UserBmc {
             password: password,
         };
 
-        let jwt = srdb.signup(Scope {
-            namespace: "test",
-            database: "test",
-            scope: "user",
-            params: credentials,
-        })
-        .await?;
+        let jwt = srdb
+            .signup(Scope {
+                namespace: "test",
+                database: "test",
+                scope: "user",
+                params: credentials,
+            })
+            .await?;
 
         Ok(jwt)
     }
@@ -76,22 +80,55 @@ impl UserBmc {
     pub async fn signin(mm: &ModelManager, email: &str, password: &str) -> Result<Jwt> {
         let srdb = mm.srdb().clone();
 
-
         srdb.use_ns("test").use_db("test").await?;
 
-        let jwt = srdb.signin(Scope {
-            namespace: "test",
-            database: "test",
-            scope: "user",
-            params: UserForLogin {
-                email: email.to_string(),
-                password: password.to_string(),
-            },
-        }).await?;
+        let jwt = srdb
+            .signin(Scope {
+                namespace: "test",
+                database: "test",
+                scope: "user",
+                params: UserForLogin {
+                    email: email.to_string(),
+                    password: password.to_string(),
+                },
+            })
+            .await?;
 
         // dbg!(&jwt.as_insecure_token());
 
         Ok(jwt)
+    }
+
+    pub async fn verify_user_pw(
+        mm: &ModelManager,
+        email: &str,
+        password_clear: &str,
+    ) -> Result<bool> {
+        let srdb = mm.srdb().clone();
+
+        let sql = format!(
+            "
+        LET $user = (SELECT * FROM user WHERE email = $email AND crypto::argon2::compare(password, $password_clear));
+        RETURN $user;
+        // RETURN crypto::argon2::compare($user.password, $password_clear);
+        "
+        );
+
+        let mut response = srdb
+            .query(sql)
+            .bind(("email", email.to_string()))
+            .bind(("password_clear", password_clear.to_string()))
+            .await?;
+
+        // dbg!(&response);
+        let is_verified: Option<User> = response.take(1)?;
+        // dbg!(&is_verified);
+
+        if let Some(is_verified) = is_verified {
+            return Ok(true);
+        } else {
+            return Ok(false);
+        }
     }
 
     /// Create a new user with new_user_name as id in table user
