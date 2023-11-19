@@ -12,6 +12,8 @@ use std::collections::HashMap;
 use bigdecimal::BigDecimal;
 use chrono::Local;
 use model::datatypes::DataTypesForCreate;
+use model::surreal_store::general_crud::{general_create, Record};
+use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 use ulid::Ulid;
 use uuid::Uuid;
@@ -43,15 +45,41 @@ async fn main() -> Result<()> {
     test_delete_tables(&mm).await?;
     test_create_schemaful(&mm).await?;
 
+    test_general(&mm).await?;
+
     // test_edges(&mm).await?;
 
     // test_datatypes(&mm).await?;
 
-    test_users(&mm).await?;
+    // test_users(&mm).await?;
 
     // test_labelbmc(&mm).await?;
 
     // test_transactionbmc(&mm).await?;
+
+    Ok(())
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RandomContent {
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RandomContentUpdate {
+    pub name: Option<String>,
+}
+
+async fn test_general(mm: &ModelManager) -> Result<()> {
+    let srdb = mm.srdb().clone();
+
+    let c = RandomContent {
+        name: "The Name".to_string(),
+    };
+
+    let res: Record<RandomContent> = general_create::<_, _>(mm, "general", c).await?;
+
+    dbg!(res);
 
     Ok(())
 }
@@ -65,6 +93,7 @@ async fn test_delete_tables(mm: &ModelManager) -> Result<()> {
     REMOVE TABLE user;
     REMOVE TABLE datatypes;
     REMOVE TABLE edge;
+    REMOVE TABLE general;
     ";
     let _res = srdb.query(sql).await?;
     // dbg!(_res);
@@ -227,13 +256,11 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
 
 /// test UserBmc
 async fn test_users(mm: &ModelManager) -> Result<()> {
-
     let jwt = UserBmc::signup(mm, "signupname", "signup@user.com", "clear_password").await?;
     let jwt = UserBmc::signup(mm, "signupname2", "signup2@user.com", "clear_password").await?;
     // let jwt = UserBmc::signin(mm, "signup@user.com", "clear_password").await?;
     let verified = UserBmc::verify_user_pw(mm, "signup@user.com", "clear_password").await?;
     dbg!(&verified);
-
 
     // let new_user = UserBmc::create(mm, "FirstUser", "first@user.com", "clear_password").await?;
     // let jwt = UserBmc::signin(mm, "first@user.com", "clear_password").await?;

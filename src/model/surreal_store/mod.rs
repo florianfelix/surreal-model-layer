@@ -1,6 +1,7 @@
 /// Isomorphic(?) functions the Model Controllers can call
 pub mod base_crud;
 pub mod base_graph;
+pub mod general_crud;
 pub mod error;
 
 use surrealdb::{

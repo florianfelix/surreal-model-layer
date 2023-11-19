@@ -1,4 +1,4 @@
-use crate::model;
+use crate::model::{self, surreal_store};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -8,6 +8,8 @@ pub enum Error {
     Generic,
     
 	Model(model::Error),
+
+	Store(surreal_store::Error),
 
     Surreal(surrealdb::Error),
 }
@@ -26,6 +28,12 @@ impl From<surrealdb::Error> for Error {
 	fn from(val: surrealdb::Error) -> Self {
 		Self::Surreal(val)
 	}
+}
+
+impl From<surreal_store::Error> for Error {
+   fn from(val: surreal_store::Error) -> Self {
+	   Self::Store(val)
+   }
 }
 // endregion: --- Froms
 
