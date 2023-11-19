@@ -21,6 +21,7 @@ use uuid::Uuid;
 use crate::model::datatypes::{DataTypesBmc, EmbededStruct};
 use crate::model::edge::EdgeBmc;
 use crate::model::label::{LabelBmc, LabelForCreate, LabelForUpdate};
+use crate::model::surreal_store::general_crud::{general_get, general_update, general_list, general_delete};
 use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate};
 use crate::model::user::UserBmc;
 use crate::model::ModelManager;
@@ -78,8 +79,20 @@ async fn test_general(mm: &ModelManager) -> Result<()> {
     };
 
     let res: Record<RandomContent> = general_create::<_, _>(mm, "general", c).await?;
+    dbg!(&res);
 
-    dbg!(res);
+    let res: Record<RandomContent> = general_get::<_>(mm, "general", &res.id.id.to_raw()).await?;
+    dbg!(&res);
+
+    let content = RandomContent {name: "Another Name".to_string()};
+    let res: Record<RandomContent> = general_update::<_, _>(mm, "general", &res.id.id.to_raw(), content).await?;
+    dbg!(&res);
+
+    let res: Vec<Record<RandomContent>> = general_list::<_>(mm, "general").await?;
+    dbg!(&res);
+
+    let res: Record<RandomContent> = general_delete(mm, "general", &res.clone().pop().unwrap().id.id.to_raw()).await?;
+    dbg!(&res);
 
     Ok(())
 }
