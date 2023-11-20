@@ -4,7 +4,7 @@ use super::surreal_store::base_crud::{
     base_create, base_create_with_id, base_create_with_ulid, base_delete, base_get, base_info,
     base_list, base_update,
 };
-use super::surreal_store::SurrealBmc;
+use super::surreal_store::{SurrealBmc, general_crud::{general_create, general_list}};
 use crate::model::ModelManager;
 #[allow(unused_imports)]
 use crate::model::{Error, Result};
@@ -66,22 +66,22 @@ impl SurrealBmc for DataTypesBmc {
 
 impl DataTypesBmc {
     pub async fn create(mm: &ModelManager, data: DataTypesForCreate) -> Result<DataTypes> {
-        let res = base_create::<Self, _, _>(mm, data).await?;
+        let res = general_create::<_, _>(mm, Self::TABLE, data).await?;
 
         Ok(res)
     }
 
     pub async fn list(mm: &ModelManager) -> Result<Vec<DataTypes>> {
-        let res = base_list::<Self, _>(mm).await?;
+        let res = general_list::<_>(mm, Self::TABLE).await?;
 
         Ok(res)
     }
 
-    pub async fn info(mm: &ModelManager) -> Result<Value> {
-        let res = base_info::<Self>(mm).await?;
+    // pub async fn info(mm: &ModelManager) -> Result<Value> {
+    //     let res = base_info::<Self>(mm).await?;
 
-        Ok(res)
-    }
+    //     Ok(res)
+    // }
 }
 
 // endregion: DataTypesBmc
