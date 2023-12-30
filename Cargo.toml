@@ -16,3 +16,4 @@ bigdecimal = {version = "0.4", features = ["serde"]}
 uuid = {version = "1.5", features = ["v4","fast-rng", "serde"]}
 ulid = {version = "1.1", features = ["serde"]}
 chrono = {version = "0.4", features = ["serde"]}
+polars = { version = "0.35", features = ["lazy", "temporal", "describe", "json", "dtype-datetime"]}
