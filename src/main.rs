@@ -22,7 +22,8 @@ use crate::model::datatypes::{DataTypesBmc, EmbededStruct};
 use crate::model::edge::EdgeBmc;
 use crate::model::label::{LabelBmc, LabelForCreate, LabelForUpdate};
 use crate::model::surreal_store::general_crud::{general_get, general_update, general_list, general_delete};
-use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate};
+use crate::model::transaction::{TransactionBmc, TransactionForCreate, TransactionForUpdate, TransactionContentSrv};
+use crate::model::transaction_transform::transform;
 use crate::model::user::UserBmc;
 use crate::model::ModelManager;
 
@@ -50,13 +51,13 @@ async fn main() -> Result<()> {
 
     // test_edges(&mm).await?;
 
-    test_datatypes(&mm).await?;
+    // test_datatypes(&mm).await?;
 
     // test_users(&mm).await?;
 
     // test_labelbmc(&mm).await?;
 
-    // test_transactionbmc(&mm).await?;
+    test_transactionbmc(&mm).await?;
 
     Ok(())
 }
@@ -300,59 +301,63 @@ async fn test_users(mm: &ModelManager) -> Result<()> {
 /// test TransactionBmc
 async fn test_transactionbmc(mm: &ModelManager) -> Result<()> {
     // CREATE -- NORMAL RANDOM ID
-    let ta1 = TransactionForCreate {
-        title: "First Transaction".into(),
-        label: None,
-        // amount: 33.45,
-        amount: 33.45,
-    };
-    let created = TransactionBmc::create(&mm, ta1).await?;
-    dbg!(&created);
+    // let ta1 = TransactionForCreate {
+    //     title: "First Transaction".into(),
+    //     label: None,
+    //     // amount: 33.45,
+    //     amount: 33.45,
+    // };
+    // let created = TransactionBmc::create(&mm, ta1).await?;
+    // dbg!(&created);
 
-    // CREATE -- ULID
-    let ta2 = TransactionForCreate {
-        title: "Second Transaction".into(),
-        label: None,
-        amount: 55.45,
-    };
-    let created_ulid = TransactionBmc::create_ulid(&mm, ta2).await?;
-    dbg!(&created_ulid);
+    // // CREATE -- ULID
+    // let ta2 = TransactionForCreate {
+    //     title: "Second Transaction".into(),
+    //     label: None,
+    //     amount: 55.45,
+    // };
+    // let created_ulid = TransactionBmc::create_ulid(&mm, ta2).await?;
+    // dbg!(&created_ulid);
 
-    // CREATE -- ID
-    let ta3 = TransactionForCreate {
-        title: "Third Transaction".into(),
-        label: Some(Thing {
-            tb: "label".to_string(),
-            id: "My first Label".into(),
-        }),
-        amount: 89.12,
-    };
-    let created_id = TransactionBmc::create_with_id(&mm, "Third Transaction".into(), ta3).await?;
-    dbg!(&created_id);
+    // // CREATE -- ID
+    // let ta3 = TransactionForCreate {
+    //     title: "Third Transaction".into(),
+    //     label: Some(Thing {
+    //         tb: "label".to_string(),
+    //         id: "My first Label".into(),
+    //     }),
+    //     amount: 89.12,
+    // };
+    // let created_id = TransactionBmc::create_with_id(&mm, "Third Transaction".into(), ta3).await?;
+    // dbg!(&created_id);
 
-    // GET -- BY ID
-    let gotten = TransactionBmc::get(&mm, "Third Transaction".into()).await?;
-    // dbg!(gotten);
+    // // GET -- BY ID
+    // let gotten = TransactionBmc::get(&mm, "Third Transaction".into()).await?;
+    // // dbg!(gotten);
 
-    // UPDATE -- BY ID
-    let taupdate = TransactionForUpdate {
-        title: Some("Third Transaction Updated".to_string()),
-        label: Some(Thing {
-            tb: "label".to_string(),
-            id: "The Second Label".into(),
-        }),
-        amount: Some(64.89),
-    };
-    let updated =
-        TransactionBmc::update(&mm, created_ulid.clone().id.id.to_raw(), taupdate).await?;
+    // // UPDATE -- BY ID
+    // let taupdate = TransactionForUpdate {
+    //     title: Some("Third Transaction Updated".to_string()),
+    //     label: Some(Thing {
+    //         tb: "label".to_string(),
+    //         id: "The Second Label".into(),
+    //     }),
+    //     amount: Some(64.89),
+    // };
+    // let updated =
+    //     TransactionBmc::update(&mm, created_ulid.clone().id.id.to_raw(), taupdate).await?;
     // dbg!(updated);
+
+    let created0 = TransactionBmc::create_ulid(&mm, TransactionContentSrv::new()).await?;
 
     // LIST -- ALL
     let listed = TransactionBmc::list(&mm).await?;
-    dbg!(listed);
+    dbg!(&listed);
+
+    let r = transform(listed.clone()).await?;
 
     // DELETE -- BY ID
-    let delted = TransactionBmc::delete(&mm, created.id.id.to_raw()).await?;
+    let delted = TransactionBmc::delete(&mm, created0.id.id.to_raw()).await?;
     dbg!(delted);
 
     Ok(())

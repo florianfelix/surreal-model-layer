@@ -11,6 +11,7 @@ pub mod surreal_store;
 pub mod label;
 /// TransactionBmc. Everything for the `transaction` table
 pub mod transaction;
+pub mod transaction_transform;
 /// UserBmc. Everything for the `user` table
 pub mod user;
 /// DatatypesBmc. Table to test the roundtrip of varying datatypes

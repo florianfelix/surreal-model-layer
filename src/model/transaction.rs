@@ -1,3 +1,4 @@
+use chrono::{DateTime, Local, FixedOffset, Utc};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::Thing;
 
@@ -37,7 +38,36 @@ pub struct TransactionForUpdate {
     pub label: Option<Thing>,
     pub amount: Option<f64>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TransactionSrv {
+	pub id: Thing,
+	#[serde(flatten)]
+	pub data: TransactionContentSrv,
+}
 // endregion: Types
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TransactionContentSrv {
+	pub title: String,
+	// pub amount: BigDecimal,
+	pub amount: f64,
+	// pub created_at: String,
+	// pub created_at: DateTime<Local>,
+	pub date: DateTime<Utc>,
+	pub immo: Vec<Thing>,
+	pub konto: Vec<Thing>,
+}
+impl TransactionContentSrv {
+    pub fn new() -> Self {
+        Self {
+            title: "NewTitle".to_string(),
+            amount: 12.42,
+            date: Local::now().into(),
+            immo: vec![("immo", "steendiek").into()],
+            konto: vec![("konto", "wasser").into()],
+        }
+    }
+}
 
 // region: TransactionBmc
 pub struct TransactionBmc;
@@ -48,7 +78,7 @@ impl SurrealBmc for TransactionBmc {
 
 impl TransactionBmc {
     // CREATE
-    pub async fn create(mm: &ModelManager, ta_create: TransactionForCreate) -> Result<Transaction> {
+    pub async fn create(mm: &ModelManager, ta_create: TransactionForCreate) -> Result<TransactionSrv> {
         let res = base_create::<Self, _, _>(mm, ta_create).await?;
 
         Ok(res)
@@ -56,8 +86,8 @@ impl TransactionBmc {
     // CREATE
     pub async fn create_ulid(
         mm: &ModelManager,
-        ta_create: TransactionForCreate,
-    ) -> Result<Transaction> {
+        ta_create: TransactionContentSrv,
+    ) -> Result<TransactionSrv> {
         let res = base_create_with_ulid::<Self, _, _>(mm, ta_create).await?;
 
         Ok(res)
@@ -68,21 +98,21 @@ impl TransactionBmc {
         mm: &ModelManager,
         id: String,
         ta_create: TransactionForCreate,
-    ) -> Result<Transaction> {
+    ) -> Result<TransactionSrv> {
         let res = base_create_with_id::<Self, _, _>(mm, ta_create, &id).await?;
 
         Ok(res)
     }
 
     // GET
-    pub async fn get(mm: &ModelManager, id: String) -> Result<Transaction> {
+    pub async fn get(mm: &ModelManager, id: String) -> Result<TransactionSrv> {
         let res = base_get::<Self, _>(mm, &id).await?;
 
         Ok(res)
     }
 
     // LIST ALL
-    pub async fn list(mm: &ModelManager) -> Result<Vec<Transaction>> {
+    pub async fn list(mm: &ModelManager) -> Result<Vec<TransactionSrv>> {
         let res = base_list::<Self, _>(mm).await?;
 
         Ok(res)
@@ -93,14 +123,14 @@ impl TransactionBmc {
         mm: &ModelManager,
         id: String,
         data: TransactionForUpdate,
-    ) -> Result<Transaction> {
+    ) -> Result<TransactionSrv> {
         let res = base_update::<Self, _, _>(mm, data, &id).await?;
 
         Ok(res)
     }
 
     // DELETE
-    pub async fn delete(mm: &ModelManager, id: String) -> Result<Transaction> {
+    pub async fn delete(mm: &ModelManager, id: String) -> Result<TransactionSrv> {
         let res = base_delete::<Self, _>(mm, &id).await?;
 
         Ok(res)
