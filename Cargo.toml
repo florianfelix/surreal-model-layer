@@ -29,4 +29,6 @@ polars = { version = "0.35", features = [
     "object",
     "serde-lazy",
     "json",
+    "strings",
+    "timezones",
 ] }

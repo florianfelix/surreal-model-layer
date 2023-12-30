@@ -53,7 +53,7 @@ pub struct TransactionContentSrv {
 	pub amount: f64,
 	// pub created_at: String,
 	// pub created_at: DateTime<Local>,
-	pub date: DateTime<Utc>,
+	pub date: DateTime<Local>,
 	pub immo: Vec<Thing>,
 	pub konto: Vec<Thing>,
 }

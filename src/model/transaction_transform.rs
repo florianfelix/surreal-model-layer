@@ -1,7 +1,10 @@
 use super::transaction::{Transaction, TransactionContentSrv, TransactionSrv};
 
 use chrono::{prelude::*, DateTime, FixedOffset, Local, Utc};
-use polars::prelude::*;
+use polars::{
+    lazy::dsl::{col, lit, StrptimeOptions},
+    prelude::*,
+};
 use surrealdb::sql::Thing;
 
 #[allow(unused_imports)]
@@ -35,5 +38,32 @@ pub async fn transform(transactions: Vec<TransactionSrv>) -> Result<()> {
     .unwrap();
 
     println!("{}", df);
+
+    let out = df
+        .clone()
+        .lazy()
+        .select([
+            col("*").exclude(["date"]),
+            col("date").str().to_datetime(
+                Some(TimeUnit::Microseconds),
+                None,
+                StrptimeOptions::default(),
+                lit("raise"),
+            ),
+            col("date").str().to_datetime(
+                Some(TimeUnit::Microseconds),
+                None,
+                StrptimeOptions::default(),
+                lit("raise"),
+            )
+            .dt()
+            .convert_time_zone("Europe/Berlin".to_string())
+            .alias("local_date"),
+        ])
+        .collect()
+        .unwrap();
+
+    println!("{}", out);
+
     Ok(())
 }
