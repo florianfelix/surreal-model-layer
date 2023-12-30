@@ -10,7 +10,7 @@
 use std::collections::HashMap;
 
 use bigdecimal::BigDecimal;
-use chrono::Local;
+use chrono::{Local, DateTime};
 use model::datatypes::DataTypesForCreate;
 use model::surreal_store::general_crud::{general_create, Record};
 use serde::{Deserialize, Serialize};
@@ -46,7 +46,7 @@ async fn main() -> Result<()> {
     test_delete_tables(&mm).await?;
     test_create_schemaful(&mm).await?;
 
-    test_general(&mm).await?;
+    // test_general(&mm).await?;
 
     // test_edges(&mm).await?;
 
@@ -248,9 +248,12 @@ async fn test_datatypes(mm: &ModelManager) -> Result<()> {
         json: jsonval,
         datetime: Local::now(),
         naivedate: Local::now().naive_local().date(),
+        datetimefixed: DateTime::parse_from_rfc3339("2020-01-21T00:00:00+01:00").unwrap(),
         record: record.clone(),
         record_string: record.to_raw(),
         money: BigDecimal::from(((12.55 * 100.) as i64, 2)),
+        opt: Some(42),
+        optnone: None,
     };
 
     // let data = DataTypesForCreate::default();
